@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             statusErrorListener) {
         @Override
         public Map<String, String> getHeaders() throws AuthFailureError {
-            return createBasicAuthHeader("arkf", "***REMOVED***");
+            return createBasicAuthHeader("user", "pass");
         }
     };
 
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 postErrorListener) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return createBasicAuthHeader("arkf", "***REMOVED***");
+                return createBasicAuthHeader("user", "pass");
             }
         };
 
