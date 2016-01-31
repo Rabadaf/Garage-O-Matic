@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Garage-O-Matic</string>
     <string name="button_toggle">Toggle Door</string>
+    <string name="button_notify">Send Notification</string>
     <string name="text_status">Closed</string>
     <string name="title_activity_login">Sign in</string>
     <string name="title_text">Google Sign-In\nQuickstart</string>
@@ -45,4 +46,19 @@
     <!-- Server Client ID.  This should be a valid Web OAuth 2.0 Client ID obtained
          from https://console.developers.google.com/ -->
     <string name="server_client_id">77576131536-8t29khnr48rqiq7f1p3skcats0lsepnu.apps.googleusercontent.com</string>
+
+    <string name="new_message_notification_title_template">New message: %1$s</string>
+
+    <!-- TODO: remove this placeholder text -->
+    <string name="new_message_notification_placeholder_text_template">You said %1$s and lorem ipsum
+        dolor sit amet, consectetur adipiscing elit. Etiam non enim magna. Morbi dictum, velit vel
+        semper venenatis, magna odio volutpat velit, at ullamcorper nulla lacus sed turpis.
+        Pellentesque vitae metus elit, nec tincidunt tellus. Integer sed nisl sem, ullamcorper
+        ornare lacus. Duis ac mauris sed massa congue volutpat. Donec sed erat sit amet turpis
+        viverra rhoncus sit amet nec magna. Donec lacinia ligula at libero volutpat volutpat nec nec
+        tortor.
+    </string>
+
+    <string name="action_share">Share</string>
+    <string name="action_reply">Reply</string>
 </resources>
