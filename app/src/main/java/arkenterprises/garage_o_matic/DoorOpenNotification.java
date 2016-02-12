@@ -20,41 +20,30 @@ import android.support.v4.app.NotificationCompat;
  * This class makes heavy use of the {@link NotificationCompat.Builder} helper
  * class to create notifications in a backward-compatible way.
  */
-public class NewMessageNotification {
+public class DoorOpenNotification {
     /**
      * The unique identifier for this type of notification.
      */
-    private static final String NOTIFICATION_TAG = "NewMessage";
+    private static final String NOTIFICATION_TAG = "DoorOpenNotification";
 
     /**
      * Shows the notification, or updates a previously shown notification of
      * this type, with the given parameters.
-     * <p/>
-     * TODO: Customize this method's arguments to present relevant content in
-     * the notification.
-     * <p/>
-     * TODO: Customize the contents of this method to tweak the behavior and
-     * presentation of new message notifications. Make
-     * sure to follow the
-     * <a href="https://developer.android.com/design/patterns/notifications.html">
-     * Notification design guidelines</a> when doing so.
      *
      * @see #cancel(Context)
      */
     public static void notify(final Context context,
-                              final String exampleString, final int number) {
+                              final String doorOpenTime, final int number) {
         final Resources res = context.getResources();
 
         // This image is used as the notification's large icon (thumbnail).
-        // TODO: Remove this if your notification has no relevant thumbnail.
-        final Bitmap picture = BitmapFactory.decodeResource(res, R.drawable.example_picture);
+//        final Bitmap picture = BitmapFactory.decodeResource(res, R.drawable.example_picture);
 
-
-        final String ticker = exampleString;
+//        final String ticker = doorOpenTime;
         final String title = res.getString(
-                R.string.new_message_notification_title_template, exampleString);
+                R.string.door_open_notification_title_template, doorOpenTime);
         final String text = res.getString(
-                R.string.new_message_notification_placeholder_text_template, exampleString);
+                R.string.door_open_notification_text_template, doorOpenTime);
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 
@@ -76,10 +65,10 @@ public class NewMessageNotification {
 
                         // Provide a large icon, shown with the notification in the
                         // notification drawer on devices running Android 3.0 or later.
-                .setLargeIcon(picture)
+//                .setLargeIcon(picture)
 
                         // Set ticker text (preview) information for this notification.
-                .setTicker(ticker)
+                .setTicker(doorOpenTime)
 
                         // Show a number. This is useful when stacking notifications of
                         // a single type.
@@ -100,7 +89,7 @@ public class NewMessageNotification {
                         PendingIntent.getActivity(
                                 context,
                                 0,
-                                new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com")),
+                                new Intent(context, MainActivity.class),
                                 PendingIntent.FLAG_UPDATE_CURRENT))
 
                         // Show expanded text content on devices running Android 4.1 or
@@ -108,27 +97,7 @@ public class NewMessageNotification {
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(text)
                         .setBigContentTitle(title)
-                        .setSummaryText("Dummy summary text"))
-
-                        // Example additional actions for this notification. These will
-                        // only show on devices running Android 4.1 or later, so you
-                        // should ensure that the activity in this notification's
-                        // content intent provides access to the same actions in
-                        // another way.
-                .addAction(
-                        R.drawable.ic_action_stat_share,
-                        res.getString(R.string.action_share),
-                        PendingIntent.getActivity(
-                                context,
-                                0,
-                                Intent.createChooser(new Intent(Intent.ACTION_SEND)
-                                        .setType("text/plain")
-                                        .putExtra(Intent.EXTRA_TEXT, "Dummy text"), "Dummy title"),
-                                PendingIntent.FLAG_UPDATE_CURRENT))
-                .addAction(
-                        R.drawable.ic_action_stat_reply,
-                        res.getString(R.string.action_reply),
-                        null)
+                        .setSummaryText(res.getString(R.string.door_open_notification_summary)))
 
                         // Automatically dismiss the notification when it is touched.
                 .setAutoCancel(true);

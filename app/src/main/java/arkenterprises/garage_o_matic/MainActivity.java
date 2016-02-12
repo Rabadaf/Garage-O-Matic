@@ -16,6 +16,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +47,12 @@ public class MainActivity extends AppCompatActivity {
         handler = new Handler();
         queue = Volley.newRequestQueue(this);
         handler.post(updateDoorStatus);
+
+        Intent intent = getIntent();
+        String savedUsername = intent.getStringExtra(LoginActivity.EXTRA_USERNAME);
+        String savedPassword = intent.getStringExtra(LoginActivity.EXTRA_PASSWORD);
+        System.out.println("Main Activity:" + savedUsername);
+        System.out.println("Main Activity:" + savedPassword);
     }
 
     String GPIOStatusURL = "http://arkf.duckdns.org:8000/GPIO/8/value";
@@ -76,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             statusErrorListener) {
         @Override
         public Map<String, String> getHeaders() throws AuthFailureError {
-            return createBasicAuthHeader("user", "pass");
+            return createBasicAuthHeader("ArkF", "12345");
         }
     };
 
@@ -97,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         headerMap.put("Authorization", "Basic " + base64EncodedCredentials);
 
         return headerMap;
-    };
+    }
     //test
 
     public void toggleDoor(View view) {
@@ -123,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 postErrorListener) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return createBasicAuthHeader("user", "pass");
+                return createBasicAuthHeader("ArkF", "12345");
             }
         };
 
@@ -131,9 +140,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void sendNotification(View view) {
-        NewMessageNotification nmn = new NewMessageNotification();
-        nmn.notify(this, "Hi", 1);
+    public void sendOpenNotification(View view) {
+        DoorOpenNotification don = new DoorOpenNotification();
+//        String nowString = new DateFormat.getDateTimeInstance().format(new Date());
+        String nowString = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss").format(new Date());
+//        String nowString = "Now";
+        don.notify(this, nowString, 1);
     }
 
 
