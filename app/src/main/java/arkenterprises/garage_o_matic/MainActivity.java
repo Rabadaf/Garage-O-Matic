@@ -40,10 +40,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         statusTextView = (TextView) findViewById(R.id.statusText);
-//        userNameView = (TextView) findViewById(R.id.nameText);
-//        Intent intent = getIntent();
-//        String name = intent.getStringExtra(SignInActivity.EXTRA_NAME);
-//        userNameView.setText("Signed in as: " + name);
         handler = new Handler();
         queue = Volley.newRequestQueue(this);
         handler.post(updateDoorStatus);
