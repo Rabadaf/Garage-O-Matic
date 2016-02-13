@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            android:elevation="4dp"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
@@ -36,12 +37,16 @@
         <EditText android:id="@+id/username_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/username_hint" />
+            android:hint="@string/username_hint"
+            android:inputType="textEmailAddress"
+            android:imeOptions="actionNext"/>
 
         <EditText android:id="@+id/password_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/password_hint" />
+            android:hint="@string/password_hint"
+            android:inputType="textPassword"
+            android:imeOptions="actionGo" />
 
         <Button
             android:layout_width="wrap_content"
