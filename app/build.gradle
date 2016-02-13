@@ -37,7 +37,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(':volley')
     apply plugin: 'com.google.gms.google-services'
-    compile 'com.android.support:appcompat-v7:18.0.+'
+    compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.google.android.gms:play-services-auth:8.3.0'
     compile 'com.google.android.gms:play-services-identity:8.3.0'

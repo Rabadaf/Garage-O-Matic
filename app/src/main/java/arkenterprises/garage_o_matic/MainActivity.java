@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ import java.util.Map;
 // TODO: Add notifications
 // TODO: Add customization
 // TODO: Make it close automatically at night
+// TODO: update status in background, all the time
 
 public class MainActivity extends AppCompatActivity {
 
@@ -157,6 +159,22 @@ public class MainActivity extends AppCompatActivity {
         don.notify(this, nowString, 1);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
 
 
 }
