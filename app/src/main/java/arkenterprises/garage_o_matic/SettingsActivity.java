@@ -146,13 +146,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_door_status_ringtone)));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_pi_address)));
         }
-
-//        @Override
-//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                                 Bundle savedInstanceState) {
-//            return inflater.inflate(R.xml.pref_all, container, false);
-//        }
 
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {

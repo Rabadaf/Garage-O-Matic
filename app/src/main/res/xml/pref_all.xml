@@ -24,6 +24,15 @@
         android:key="@string/pref_key_door_status_vibrate"
         android:title="@string/pref_title_vibrate" />
 
+    <EditTextPreference
+        android:defaultValue="@string/pref_default_pi_address"
+        android:inputType="textUri"
+        android:key="@string/pref_key_pi_address"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_pi_address" />
+
     <!--&lt;!&ndash; NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to-->
     <!--dismiss it. &ndash;&gt;-->
     <!--&lt;!&ndash; NOTE: ListPreference's summary should be set to its value by the activity code. &ndash;&gt;-->

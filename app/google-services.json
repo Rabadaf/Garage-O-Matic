@@ -14,14 +14,23 @@
           "package_name": "arkenterprises.garage_o_matic"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "777576131536-8t29khnr48rqiq7f1p3skcats0lsepnu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "arkenterprises.garage_o_matic",
+            "certificate_hash": "EDEA6A6EB6EB8408286BF4D7993E63B33A0CD7EC"
+          }
+        }
+      ],
       "api_key": [],
       "services": {
         "analytics_service": {
           "status": 1
         },
         "cloud_messaging_service": {
-          "status": 1,
+          "status": 2,
           "apns_config": []
         },
         "appinvite_service": {
@@ -29,7 +38,7 @@
           "other_platform_oauth_client": []
         },
         "google_signin_service": {
-          "status": 1
+          "status": 2
         },
         "ads_service": {
           "status": 1

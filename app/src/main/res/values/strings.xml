@@ -27,4 +27,11 @@
     <string name="pref_key_door_status_notifications">door_status_notifications</string>
     <string name="pref_key_door_status_ringtone">door_status_ringtone</string>
     <string name="pref_key_door_status_vibrate">door_status_vibrate</string>
+    <string name="pref_default_pi_address">http://www.example.com</string>
+    <string name="pref_key_pi_address">pi_address</string>
+    <string name="pref_title_pi_address">Web Address</string>
+    <string name="action_logout">Logout</string>
+
+    <string name="preference_file_key">garage_o_matic_pref_file</string>
+    <string name="pref_key_sentTokenToServer">sent_token_to_server</string>
 </resources>

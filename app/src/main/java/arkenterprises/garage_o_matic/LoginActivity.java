@@ -27,8 +27,8 @@ import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public final static String EXTRA_USERNAME = "arkenterprises.garage_o_matic.USERNAME";
-    public final static String EXTRA_PASSWORD = "arkenterprises.garage_o_matic.PASSWORD";
+//    public final static String EXTRA_USERNAME = "arkenterprises.garage_o_matic.USERNAME";
+//    public final static String EXTRA_PASSWORD = "arkenterprises.garage_o_matic.PASSWORD";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,17 +37,20 @@ public class LoginActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-//
-//        String savedUsername = sharedPref.getString(getString(R.string.username_hint), null);
-//        String savedPassword = sharedPref.getString(getString(R.string.password_hint), null);
-//
-//        if (savedUsername != null && savedPassword != null) {
-//            Intent intent = new Intent(this, MainActivity.class);
+        SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE);
+
+        String savedUsername = sharedPref.getString(getString(R.string.username_hint), null);
+        String savedPassword = sharedPref.getString(getString(R.string.password_hint), null);
+        System.out.println("Login Activity check 1: " + savedUsername);
+        System.out.println("Login Activity check 1: " + savedPassword);
+
+        if (savedUsername != null && savedPassword != null) {
+            Intent intent = new Intent(this, MainActivity.class);
 //            intent.putExtra(EXTRA_USERNAME, savedUsername);
 //            intent.putExtra(EXTRA_PASSWORD, savedPassword);
-//            startActivity(intent);
-//        }
+            startActivity(intent);
+        }
 
         EditText editText = (EditText) findViewById(R.id.password_text);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -71,7 +74,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(View view) {
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE);
 
         EditText usernameText = (EditText) findViewById(R.id.username_text);
         EditText passwordText = (EditText) findViewById(R.id.password_text);
@@ -89,8 +93,8 @@ public class LoginActivity extends AppCompatActivity {
 //        System.out.println(savedPassword);
 
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(EXTRA_USERNAME, username);
-        intent.putExtra(EXTRA_PASSWORD, password);
+//        intent.putExtra(EXTRA_USERNAME, username);
+//        intent.putExtra(EXTRA_PASSWORD, password);
         startActivity(intent);
     }
 
@@ -98,9 +102,33 @@ public class LoginActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
+                // User chose the "Settings" item, show the app settings UI
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;
+
+            case R.id.action_logout:
+                // User chose the "Logout" item, do it, then show Login UI
+                SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key),
+                        Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+
+                String savedUsername = sharedPref.getString(getString(R.string.username_hint), null);
+                String savedPassword = sharedPref.getString(getString(R.string.password_hint), null);
+                System.out.println("Logout clicked 1: " + savedUsername);
+                System.out.println("Logout clicked 1: " + savedPassword);
+
+                editor.remove(getString(R.string.username_hint));
+                editor.remove(getString(R.string.password_hint));
+                editor.commit();
+
+                savedUsername = sharedPref.getString(getString(R.string.username_hint), null);
+                savedPassword = sharedPref.getString(getString(R.string.password_hint), null);
+                System.out.println("Logout clicked 2: " + savedUsername);
+                System.out.println("Logout clicked 2: " + savedPassword);
+
+                Intent loginIntent = new Intent(this, LoginActivity.class);
+                startActivity(loginIntent);
                 return true;
 
             default:
