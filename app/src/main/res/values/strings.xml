@@ -5,10 +5,17 @@
     <string name="text_status">Closed</string>
     <string name="action_settings">Settings</string>
 
-    <string name="door_open_notification_title_template">Garage Door Open</string>
+    <string name="door_open_notification_title_template">Garage Door Has Opened</string>
+    <string name="door_open_too_long_title_template">Garage Door Open Too Long</string>
+    <string name="door_auto_closed_title_template">Garage Door Closed Automatically</string>
 
     <string name="door_open_notification_text_template">Door opened at %1$s</string>
     <string name="door_open_notification_summary">Garage Door Open</string>
+    <string name="door_open_too_long_text_template">Door opened at %1$s\nDoor has been open for %2$s</string>
+    <string name="door_open_too_long_summary">Garage Door Open Too Long</string>
+    <string name="door_auto_closed_text_template">Door automatically closed at %1$s</string>
+    <string name="door_auto_closed_summary">Garage Door Closed Automatically</string>
+
     <string name="action_share">Share</string>
     <string name="action_reply">Reply</string>
 
@@ -18,15 +25,15 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
-    <string name="pref_title_door_status_notifications">Door status notifications</string>
+    <string name="pref_title_show_notifications">Show Notifications</string>
 
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-    <string name="pref_key_door_status_notifications">door_status_notifications</string>
-    <string name="pref_key_door_status_ringtone">door_status_ringtone</string>
-    <string name="pref_key_door_status_vibrate">door_status_vibrate</string>
+    <string name="pref_key_show_notifications">show_notifications</string>
+    <string name="pref_key_notification_ringtone">notification_ringtone</string>
+    <string name="pref_key_notification_vibrate">notification_vibrate</string>
     <string name="pref_default_pi_address">http://www.example.com</string>
     <string name="pref_key_pi_address">pi_address</string>
     <string name="pref_title_pi_address">Web Address</string>
@@ -34,4 +41,13 @@
 
     <string name="preference_file_key">garage_o_matic_pref_file</string>
     <string name="pref_key_sentTokenToServer">sent_token_to_server</string>
+
+    <string name="connection_error_message">Error connecting to server, notify the Captain immediately!</string>
+    <string name="door_open_intent">door_open_intent</string>
+    <string name="pref_key_door_open_notification">door_open_notification</string>
+    <string name="pref_title_door_open">Door open notifications</string>
+    <string name="pref_key_door_open_too_long_notification">door_open_too_long</string>
+    <string name="pref_title_door_open_too_long">Door open too long notification</string>
+    <string name="pref_key_door_auto_closed_notification">door_auto_closed_notification</string>
+    <string name="pref_title_door_auto_closed">Door automatically closed notifications</string>
 </resources>

@@ -60,11 +60,11 @@
             android:layout_width="wrap_content"
             android:layout_height="20dp" />
 
-        <Button
+        <TextView
+            android:id="@+id/connectionStatusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_notify"
-            android:onClick="sendOpenNotification"/>
+            />
 
     </LinearLayout>
 

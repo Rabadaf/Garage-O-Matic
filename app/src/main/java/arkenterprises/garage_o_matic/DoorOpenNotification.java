@@ -26,24 +26,43 @@ public class DoorOpenNotification {
      */
     private static final String NOTIFICATION_TAG = "DoorOpenNotification";
 
+    public static final Integer DOOR_OPEN_CODE = 0;
+    public static final Integer DOOR_AUTO_CLOSED_CODE = 1;
+    public static final Integer DOOR_OPEN_TOO_LONG_CODE = 2;
+
     /**
      * Shows the notification, or updates a previously shown notification of
      * this type, with the given parameters.
      *
-     * @see #cancel(Context)
+     * @see #cancel(Context, Integer)
      */
     public static void notify(final Context context,
-                              final String doorOpenTime, final int number) {
+                              final String doorOpenTime,
+                              final String doorOpenDuration,
+                              final Boolean doorAutoClosed) {
         final Resources res = context.getResources();
 
         // This image is used as the notification's large icon (thumbnail).
 //        final Bitmap picture = BitmapFactory.decodeResource(res, R.drawable.example_picture);
 
 //        final String ticker = doorOpenTime;
-        final String title = res.getString(
-                R.string.door_open_notification_title_template, doorOpenTime);
-        final String text = res.getString(
-                R.string.door_open_notification_text_template, doorOpenTime);
+
+        final String title;
+        final String text;
+        final Integer code;
+        if (doorOpenDuration == null && !doorAutoClosed) {
+            title = res.getString(R.string.door_open_notification_title_template);
+            text = res.getString(R.string.door_open_notification_text_template, doorOpenTime);
+            code = DOOR_OPEN_CODE;
+        }else if (doorAutoClosed){
+            title = res.getString(R.string.door_auto_closed_title_template);
+            text = res.getString(R.string.door_auto_closed_text_template, doorOpenTime);
+            code = DOOR_AUTO_CLOSED_CODE;
+        }else {
+            title = res.getString(R.string.door_open_too_long_title_template);
+            text = res.getString(R.string.door_open_too_long_text_template, doorOpenTime, doorOpenDuration);
+            code = DOOR_OPEN_TOO_LONG_CODE;
+        }
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 
@@ -53,7 +72,7 @@ public class DoorOpenNotification {
 
                         // Set required fields, including the small icon, the
                         // notification title, and text.
-                .setSmallIcon(R.drawable.notify_icon)
+                .setSmallIcon(R.drawable.ic_door_open_notification2)
                 .setContentTitle(title)
                 .setContentText(text)
 
@@ -65,23 +84,14 @@ public class DoorOpenNotification {
 
                         // Provide a large icon, shown with the notification in the
                         // notification drawer on devices running Android 3.0 or later.
-//                .setLargeIcon(picture)
+//                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_door_open_notification2))
 
                         // Set ticker text (preview) information for this notification.
                 .setTicker(doorOpenTime)
 
                         // Show a number. This is useful when stacking notifications of
                         // a single type.
-                .setNumber(number)
-
-                        // If this notification relates to a past or upcoming event, you
-                        // should set the relevant time information using the setWhen
-                        // method below. If this call is omitted, the notification's
-                        // timestamp will by set to the time at which it was shown.
-                        // TODO: Call setWhen if this notification relates to a past or
-                        // upcoming event. The sole argument to this method should be
-                        // the notification timestamp in milliseconds.
-                        //.setWhen(...)
+//                .setNumber(number)
 
                         // Set the pending intent to be initiated when the user touches
                         // the notification.
@@ -96,21 +106,22 @@ public class DoorOpenNotification {
                         // later.
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(text)
-                        .setBigContentTitle(title)
-                        .setSummaryText(res.getString(R.string.door_open_notification_summary)))
+                        .setBigContentTitle(title))
+//                        .setSummaryText(res.getString(R.string.door_open_notification_summary)))
 
                         // Automatically dismiss the notification when it is touched.
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .setVisibility(Notification.VISIBILITY_PUBLIC);
 
-        notify(context, builder.build());
+        notify(context, builder.build(), code);
     }
 
     @TargetApi(Build.VERSION_CODES.ECLAIR)
-    private static void notify(final Context context, final Notification notification) {
+    private static void notify(final Context context, final Notification notification, final Integer code) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-            nm.notify(NOTIFICATION_TAG, 0, notification);
+            nm.notify(NOTIFICATION_TAG, code, notification);
         } else {
             nm.notify(NOTIFICATION_TAG.hashCode(), notification);
         }
@@ -118,14 +129,14 @@ public class DoorOpenNotification {
 
     /**
      * Cancels any notifications of this type previously shown using
-     * {@link #notify(Context, String, int)}.
+     * {@link #notify(Context, String, String, Boolean)}.
      */
     @TargetApi(Build.VERSION_CODES.ECLAIR)
-    public static void cancel(final Context context) {
+    public static void cancel(final Context context, final Integer code) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-            nm.cancel(NOTIFICATION_TAG, 0);
+            nm.cancel(NOTIFICATION_TAG, code);
         } else {
             nm.cancel(NOTIFICATION_TAG.hashCode());
         }

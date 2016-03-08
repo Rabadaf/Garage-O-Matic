@@ -1,10 +1,13 @@
 package arkenterprises.garage_o_matic;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -26,33 +29,22 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
-// TODO: Add security
-// TODO: Add notifications
-// TODO: Add customization
-// TODO: Make it close automatically at night
-// TODO: update status in background, all the time
-// TODO: close activities correctly
+// TODO: Test on actual phone
+// TODO: Make sure restarting Pi works automatically
 
 public class MainActivity extends AppCompatActivity {
 
     private static TextView statusTextView;
-    private Handler handler;
     private RequestQueue queue;
     private String username;
     private String password;
-    private SharedPreferences settingsPrefs;
     private String baseURL;
-    boolean statusCheckError;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
-//    private static TextView userNameView;
+    TextView connectionTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,22 +53,15 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        Intent intent = getIntent();
-//        String savedUsername = intent.getStringExtra(LoginActivity.EXTRA_USERNAME);
-//        String savedPassword = intent.getStringExtra(LoginActivity.EXTRA_PASSWORD);
-
         SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE);
         username = sharedPref.getString(getString(R.string.username_hint), null);
         password = sharedPref.getString(getString(R.string.password_hint), null);
-        System.out.println("Main Activity check 1: " + username);
-        System.out.println("Main Activity check 1: " + password);
+        Log.d(TAG, "username: " + username);
+        Log.d(TAG, "password: " + password);
 
-        settingsPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        baseURL = settingsPrefs.getString(getString(R.string.pref_key_pi_address), "test");
-//        baseURL = settingsPrefs.getString(getString(R.string.pref_key_pi_address), null);
-//        GPIOStatusURL = baseURL + "/GPIO/8/value";
-//        System.out.println("baseURL 1: " + baseURL);
+        SharedPreferences settingsPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        baseURL = settingsPrefs.getString(getString(R.string.pref_key_pi_address), null);
 
         // Register with GCM, if we have the right play services installed
         if (checkPlayServices()) {
@@ -85,9 +70,19 @@ public class MainActivity extends AppCompatActivity {
             startService(intent);
         }
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(doorOpenReceiver,
+                new IntentFilter("door_status_changed"));
+
         statusTextView = (TextView) findViewById(R.id.statusText);
-//        handler = new Handler();
+        connectionTextView = (TextView) findViewById(R.id.connectionStatusText);
         queue = Volley.newRequestQueue(this);
+        checkDoorStatus();
+    }
+
+    public void onResume() {
+        super.onResume();
+
+        // Make sure the door status is current
         checkDoorStatus();
     }
 
@@ -112,54 +107,30 @@ public class MainActivity extends AppCompatActivity {
     public void checkDoorStatus() {
         String GPIOStatusURL = baseURL + "/GPIO/8/value";
 
-//        Response.Listener statusListener = new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-////            System.out.println(response);
-//                // TODO: Make background color change
-//                String statusText;
-//                if (response.equals("1")) {
-//                    statusText = "Closed";
-//                }
-//                else {
-//                    statusText = "Open";
-//                }
-//                statusTextView.setText(statusText);
-//                queue.add(getRelayStatus);
-//            }
-//        };
-//
-//        Response.ErrorListener statusErrorListener = new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                System.out.println("Something Went Wrong");
-//                error.printStackTrace();
-//            }
-//        };
-
-
         final StringRequest getDoorStatus = new StringRequest(Request.Method.GET, GPIOStatusURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                System.out.println(response);
-                // TODO: Make background color change
+                Log.i(TAG, "Door Status Response: " + response);
                 String statusText;
+                int backColor;
                 if (response.equals("1")) {
                     statusText = "Closed";
+                    backColor = ContextCompat.getColor(getBaseContext(), R.color.colorBackgroundClosed);
                 }
                 else {
                     statusText = "Open";
+                    backColor = ContextCompat.getColor(getBaseContext(), R.color.colorBackgroundOpen);
                 }
                 statusTextView.setText(statusText);
-//                System.out.println(getRelayStatus);
-//                queue.add(getDoorStatus);
+                statusTextView.setBackgroundColor(backColor);
+                connectionTextView.setText("");
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("Something Went Wrong");
+                Log.e(TAG, "Something Went Wrong");
                 error.printStackTrace();
-                statusCheckError = true;
+                connectionTextView.setText(R.string.connection_error_message);
             }
         }) {
             @Override
@@ -168,29 +139,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-//        do {
-            System.out.println(getDoorStatus);
-            queue.add(getDoorStatus);
-//            try {
-//                Thread.sleep(1000);
-//            }
-//            catch(InterruptedException e) {
-//                System.out.println(e);
-//            }
-//        } while (!statusCheckError);
-
-//        final Runnable updateDoorStatus = new Runnable() {
-//            @Override
-//            public void run() {
-////            GPIOStatusURL = baseURL + "/GPIO/8/value";
-////            System.out.println("GPIOStatusURL: " + GPIOStatusURL);
-//                System.out.println(getDoorStatus);
-//                queue.add(getDoorStatus);
-//                handler.postDelayed(updateDoorStatus, 1000);
-//            }
-//        };
-//
-//        handler.postDelayed(updateDoorStatus, 1000);
+        Log.i(TAG, "Door status request: " + getDoorStatus);
+        queue.add(getDoorStatus);
     }
 
     public void toggleDoor(View view) {
@@ -200,15 +150,17 @@ public class MainActivity extends AppCompatActivity {
         Response.Listener postListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                System.out.println(response);
+                Log.d(TAG, "Toggle door response: " + response);
+                connectionTextView.setText("");
             }
         };
 
         Response.ErrorListener postErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("Something Went Wrong");
+                Log.e(TAG, "Something Went Wrong");
                 error.printStackTrace();
+                connectionTextView.setText(R.string.connection_error_message);
             }
         };
 
@@ -220,19 +172,10 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        System.out.println("PostRelay: " + postRelay);
+        Log.i(TAG, "PostRelay: " + postRelay);
         queue.add(postRelay);
     }
 
-
-    public void sendOpenNotification(View view) {
-        // TODO: send when door actually opens
-        DoorOpenNotification don = new DoorOpenNotification();
-//        String nowString = new DateFormat.getDateTimeInstance().format(new Date());
-        String nowString = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss").format(new Date());
-//        String nowString = "Now";
-        don.notify(this, nowString, 1);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -249,19 +192,12 @@ public class MainActivity extends AppCompatActivity {
                         Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
 
-                String savedUsername = sharedPref.getString(getString(R.string.username_hint), null);
-                String savedPassword = sharedPref.getString(getString(R.string.password_hint), null);
-                System.out.println("Logout clicked 1: " + savedUsername);
-                System.out.println("Logout clicked 1: " + savedPassword);
+//                String savedUsername = sharedPref.getString(getString(R.string.username_hint), null);
+//                String savedPassword = sharedPref.getString(getString(R.string.password_hint), null);
 
                 editor.remove(getString(R.string.username_hint));
                 editor.remove(getString(R.string.password_hint));
                 editor.commit();
-
-                savedUsername = sharedPref.getString(getString(R.string.username_hint), null);
-                savedPassword = sharedPref.getString(getString(R.string.password_hint), null);
-                System.out.println("Logout clicked 2: " + savedUsername);
-                System.out.println("Logout clicked 2: " + savedPassword);
 
                 Intent loginIntent = new Intent(this, LoginActivity.class);
                 startActivity(loginIntent);
@@ -295,4 +231,13 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    private BroadcastReceiver doorOpenReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String time = intent.getStringExtra("time");
+            Log.i(TAG, "Door status changed message received: " + time);
+            checkDoorStatus();
+        }
+    };
 }

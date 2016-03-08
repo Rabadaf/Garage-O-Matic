@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,8 +28,7 @@ import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
-//    public final static String EXTRA_USERNAME = "arkenterprises.garage_o_matic.USERNAME";
-//    public final static String EXTRA_PASSWORD = "arkenterprises.garage_o_matic.PASSWORD";
+    private static final String TAG = "LoginActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,18 +37,18 @@ public class LoginActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Get preferences from specific file
         SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE);
 
         String savedUsername = sharedPref.getString(getString(R.string.username_hint), null);
         String savedPassword = sharedPref.getString(getString(R.string.password_hint), null);
-        System.out.println("Login Activity check 1: " + savedUsername);
-        System.out.println("Login Activity check 1: " + savedPassword);
+        Log.i(TAG, "savedUsername: " + savedUsername);
+        Log.i(TAG, "savedPassword: " + savedPassword);
 
+        // If both username and password were retrieved, move on immediately
         if (savedUsername != null && savedPassword != null) {
             Intent intent = new Intent(this, MainActivity.class);
-//            intent.putExtra(EXTRA_USERNAME, savedUsername);
-//            intent.putExtra(EXTRA_PASSWORD, savedPassword);
             startActivity(intent);
         }
 
@@ -87,14 +87,7 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString(getString(R.string.password_hint), password);
         editor.apply();
 
-//        String savedUsername = sharedPref.getString(getString(R.string.username_hint), "Not found");
-//        String savedPassword = sharedPref.getString(getString(R.string.password_hint), "Not found");
-//        System.out.println(savedUsername);
-//        System.out.println(savedPassword);
-
         Intent intent = new Intent(this, MainActivity.class);
-//        intent.putExtra(EXTRA_USERNAME, username);
-//        intent.putExtra(EXTRA_PASSWORD, password);
         startActivity(intent);
     }
 
@@ -113,19 +106,12 @@ public class LoginActivity extends AppCompatActivity {
                         Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
 
-                String savedUsername = sharedPref.getString(getString(R.string.username_hint), null);
-                String savedPassword = sharedPref.getString(getString(R.string.password_hint), null);
-                System.out.println("Logout clicked 1: " + savedUsername);
-                System.out.println("Logout clicked 1: " + savedPassword);
+//                String savedUsername = sharedPref.getString(getString(R.string.username_hint), null);
+//                String savedPassword = sharedPref.getString(getString(R.string.password_hint), null);
 
                 editor.remove(getString(R.string.username_hint));
                 editor.remove(getString(R.string.password_hint));
                 editor.commit();
-
-                savedUsername = sharedPref.getString(getString(R.string.username_hint), null);
-                savedPassword = sharedPref.getString(getString(R.string.password_hint), null);
-                System.out.println("Logout clicked 2: " + savedUsername);
-                System.out.println("Logout clicked 2: " + savedPassword);
 
                 Intent loginIntent = new Intent(this, LoginActivity.class);
                 startActivity(loginIntent);

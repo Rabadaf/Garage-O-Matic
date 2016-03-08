@@ -64,7 +64,6 @@ public class RegistrationIntentService extends IntentService {
     }
 
     private void sendRegistrationToServer(String token) {
-        //TODO: send to Pi using Webiopi macro
         RequestQueue queue = Volley.newRequestQueue(this);
         SharedPreferences settingsPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String baseURL = settingsPrefs.getString(getString(R.string.pref_key_pi_address), null);
