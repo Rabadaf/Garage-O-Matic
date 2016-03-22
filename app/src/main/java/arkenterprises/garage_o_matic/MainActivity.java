@@ -1,10 +1,13 @@
 package arkenterprises.garage_o_matic;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -17,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -34,10 +38,15 @@ import java.util.Map;
 
 // TODO: Test on actual phone
 // TODO: Make sure restarting Pi works automatically
+// TODO: wire it up and mount in garage
+// TODO: Notification when pi is down
+// TODO: change password to something decent
+// TODO: clean up logging
 
 public class MainActivity extends AppCompatActivity {
 
     private static TextView statusTextView;
+    private static Button toggleButton;
     private RequestQueue queue;
     private String username;
     private String password;
@@ -73,10 +82,20 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(doorOpenReceiver,
                 new IntentFilter("door_status_changed"));
 
+        toggleButton = (Button) findViewById(R.id.toggleButton);
         statusTextView = (TextView) findViewById(R.id.statusText);
         connectionTextView = (TextView) findViewById(R.id.connectionStatusText);
         queue = Volley.newRequestQueue(this);
         checkDoorStatus();
+
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        alarmIntent.putExtra("baseURL", baseURL);
+        alarmIntent.putExtra("username", username);
+        alarmIntent.putExtra("password", password);
+        PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+        AlarmManager aManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        aManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_HALF_DAY, AlarmManager.INTERVAL_HALF_DAY, pIntent);
+        aManager.setRepeating(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_HALF_HOUR, AlarmManager.INTERVAL_HALF_HOUR, pIntent);
     }
 
     public void onResume() {
@@ -112,17 +131,21 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 Log.i(TAG, "Door Status Response: " + response);
                 String statusText;
+                String buttonText;
                 int backColor;
                 if (response.equals("1")) {
-                    statusText = "Closed";
+                    statusText = getString(R.string.text_status_closed);
+                    buttonText = getString(R.string.button_toggle_open);
                     backColor = ContextCompat.getColor(getBaseContext(), R.color.colorBackgroundClosed);
                 }
                 else {
-                    statusText = "Open";
+                    statusText = getString(R.string.text_status_open);
+                    buttonText = getString(R.string.button_toggle_close);
                     backColor = ContextCompat.getColor(getBaseContext(), R.color.colorBackgroundOpen);
                 }
                 statusTextView.setText(statusText);
                 statusTextView.setBackgroundColor(backColor);
+                toggleButton.setText(buttonText);
                 connectionTextView.setText("");
             }
         }, new Response.ErrorListener() {
@@ -191,9 +214,6 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key),
                         Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
-
-//                String savedUsername = sharedPref.getString(getString(R.string.username_hint), null);
-//                String savedPassword = sharedPref.getString(getString(R.string.password_hint), null);
 
                 editor.remove(getString(R.string.username_hint));
                 editor.remove(getString(R.string.password_hint));

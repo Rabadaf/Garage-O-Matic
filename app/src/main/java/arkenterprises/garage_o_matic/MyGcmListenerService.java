@@ -52,18 +52,18 @@ public class MyGcmListenerService extends GcmListenerService {
 
     private void processAutoClosed(String time) {
         DoorOpenNotification don = new DoorOpenNotification();
-        don.notify(this, time, null, true);
+        don.notify(this, time, null, DoorOpenNotification.DOOR_AUTO_CLOSED_CODE);
     }
 
     private void processOpenTooLong(String time, String openTime) {
         DoorOpenNotification don = new DoorOpenNotification();
-        don.notify(this, time, openTime, false);
+        don.notify(this, time, openTime, DoorOpenNotification.DOOR_OPEN_TOO_LONG_CODE);
     }
 
     private void processStatusChange(String doorStatus, String time, Boolean openNotificationsPref) {
         if (doorStatus.equals("open") && openNotificationsPref) {
             DoorOpenNotification don = new DoorOpenNotification();
-            don.notify(this, time, null, false);
+            don.notify(this, time, null, DoorOpenNotification.DOOR_OPEN_CODE);
         } else {
             DoorOpenNotification don = new DoorOpenNotification();
             don.cancel(this, don.DOOR_OPEN_TOO_LONG_CODE);

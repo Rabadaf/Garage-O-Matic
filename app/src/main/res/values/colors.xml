@@ -5,6 +5,8 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorBackgroundClosed">#2e7d32</color>
     <color name="colorTextClosed">#000000</color>
-    <color name="colorBackgroundOpen">#ff5722</color>
+    <color name="colorBackgroundOpen">#d84315</color>
     <color name="colorTextOpen">#000000</color>
+    <color name="colorGradientStart">#90caf9</color>
+    <color name="colorGradientEnd">#0d47a1</color>
 </resources>

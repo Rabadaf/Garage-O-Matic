@@ -29,6 +29,8 @@ public class DoorOpenNotification {
     public static final Integer DOOR_OPEN_CODE = 0;
     public static final Integer DOOR_AUTO_CLOSED_CODE = 1;
     public static final Integer DOOR_OPEN_TOO_LONG_CODE = 2;
+    public static final Integer SERVER_NOT_AVAILABLE_CODE = 3;
+
 
     /**
      * Shows the notification, or updates a previously shown notification of
@@ -39,7 +41,7 @@ public class DoorOpenNotification {
     public static void notify(final Context context,
                               final String doorOpenTime,
                               final String doorOpenDuration,
-                              final Boolean doorAutoClosed) {
+                              final int notificationType) {
         final Resources res = context.getResources();
 
         // This image is used as the notification's large icon (thumbnail).
@@ -49,19 +51,21 @@ public class DoorOpenNotification {
 
         final String title;
         final String text;
-        final Integer code;
-        if (doorOpenDuration == null && !doorAutoClosed) {
+        if (notificationType == DOOR_OPEN_CODE) {
             title = res.getString(R.string.door_open_notification_title_template);
             text = res.getString(R.string.door_open_notification_text_template, doorOpenTime);
-            code = DOOR_OPEN_CODE;
-        }else if (doorAutoClosed){
+        }else if (notificationType == DOOR_AUTO_CLOSED_CODE){
             title = res.getString(R.string.door_auto_closed_title_template);
             text = res.getString(R.string.door_auto_closed_text_template, doorOpenTime);
-            code = DOOR_AUTO_CLOSED_CODE;
-        }else {
+        }else if (notificationType == SERVER_NOT_AVAILABLE_CODE) {
+            title = res.getString(R.string.server_error_notification_title_template);
+            text = res.getString(R.string.server_error_notification_text_template, doorOpenTime);
+        }else if (notificationType == DOOR_OPEN_TOO_LONG_CODE){
             title = res.getString(R.string.door_open_too_long_title_template);
             text = res.getString(R.string.door_open_too_long_text_template, doorOpenTime, doorOpenDuration);
-            code = DOOR_OPEN_TOO_LONG_CODE;
+        }else {
+            title = "Error";
+            text = "Error";
         }
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
@@ -113,7 +117,7 @@ public class DoorOpenNotification {
                 .setAutoCancel(true)
                 .setVisibility(Notification.VISIBILITY_PUBLIC);
 
-        notify(context, builder.build(), code);
+        notify(context, builder.build(), notificationType);
     }
 
     @TargetApi(Build.VERSION_CODES.ECLAIR)

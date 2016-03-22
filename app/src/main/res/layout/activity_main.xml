@@ -30,31 +30,34 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:background="@drawable/cool_gradient">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_toggle"
-            android:onClick="toggleDoor"/>
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="20dp" />
 
         <TextView
             android:id="@+id/statusText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorBackgroundClosed"
             android:textColor="@color/colorTextClosed"
             android:textStyle="bold"
             android:textAlignment="center"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:text="@string/text_status"/>
+            android:padding="40dp"
+            android:textSize="40sp"
+            android:text="@string/text_status_closed"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+        <Button
+            android:id="@+id/toggleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="40dp"
+            android:textSize="40sp"
+            android:text="@string/button_toggle_open"
+            android:onClick="toggleDoor"/>
 
         <Space
             android:layout_width="wrap_content"
@@ -64,6 +67,7 @@
             android:id="@+id/connectionStatusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/colorBackgroundOpen"
             />
 
     </LinearLayout>
