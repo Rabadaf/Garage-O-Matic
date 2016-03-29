@@ -3,6 +3,8 @@ package arkenterprises.garage_o_matic;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
@@ -21,7 +23,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+
+
 public class AlarmReceiver extends BroadcastReceiver {
+
+    Boolean serverDownPref;
 
     private static final String TAG = "AlarmReceiver";
 
@@ -31,9 +37,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         String baseURL = intent.getStringExtra("baseURL");
         String username = intent.getStringExtra("username");
         String password = intent.getStringExtra("password");
-        Log.d(TAG, baseURL);
-        Log.d(TAG, username);
-        Log.d(TAG, password);
+//        Log.d(TAG, baseURL);
+//        Log.d(TAG, username);
+//        Log.d(TAG, password);
 
         checkServerStatus(context, baseURL, username, password);
     }
@@ -56,12 +62,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         final StringRequest getDoorStatus = new StringRequest(Request.Method.GET, GPIOStatusURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Door Status Response: " + response);
+//                Log.d(TAG, "Door Status Response: " + response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Something Went Wrong");
+//                Log.e(TAG, "Something Went Wrong");
                 error.printStackTrace();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d H:m:s yyyy");
@@ -76,7 +82,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             }
         };
 
-        Log.i(TAG, "Door status request: " + getDoorStatus);
+//        Log.i(TAG, "Door status request: " + getDoorStatus);
         queue.add(getDoorStatus);
     }
 }

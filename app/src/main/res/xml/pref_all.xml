@@ -45,6 +45,13 @@
         android:key="@string/pref_key_door_auto_closed_notification"
         android:title="@string/pref_title_door_auto_closed" />
 
+    !-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
+    <SwitchPreference
+        android:defaultValue="true"
+        android:dependency="@string/pref_key_show_notifications"
+        android:key="@string/pref_key_server_down_notification"
+        android:title="@string/pref_title_server_down" />
+
     <EditTextPreference
         android:defaultValue="@string/pref_default_pi_address"
         android:inputType="textUri"

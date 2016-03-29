@@ -27,13 +27,17 @@ public class BootReceiver extends BroadcastReceiver {
             String baseURL = settingsPrefs.getString(context.getString(R.string.pref_key_pi_address), null);
             Log.d(TAG, "baseURL: " + baseURL);
 
-            Intent alarmIntent = new Intent(context, AlarmReceiver.class);
-            alarmIntent.putExtra("baseURL", baseURL);
-            alarmIntent.putExtra("username", username);
-            alarmIntent.putExtra("password", password);
-            PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
-            AlarmManager aManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            aManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_HALF_DAY, AlarmManager.INTERVAL_HALF_DAY, pIntent);
+            Boolean showNotifications = settingsPrefs.getBoolean(context.getString(R.string.pref_key_show_notifications), false);
+            Boolean serverDownPref = showNotifications && settingsPrefs.getBoolean(context.getString(R.string.pref_key_server_down_notification), false);
+            if (serverDownPref) {
+                Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+                alarmIntent.putExtra("baseURL", baseURL);
+                alarmIntent.putExtra("username", username);
+                alarmIntent.putExtra("password", password);
+                PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+                AlarmManager aManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                aManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_HALF_DAY, AlarmManager.INTERVAL_HALF_DAY, pIntent);
+            }
         }
     }
 }

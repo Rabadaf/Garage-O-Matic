@@ -36,12 +36,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: Test on actual phone
 // TODO: Make sure restarting Pi works automatically
 // TODO: wire it up and mount in garage
-// TODO: Notification when pi is down
-// TODO: change password to something decent
-// TODO: clean up logging
 
 public class MainActivity extends AppCompatActivity {
 
@@ -88,14 +84,18 @@ public class MainActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(this);
         checkDoorStatus();
 
-        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
-        alarmIntent.putExtra("baseURL", baseURL);
-        alarmIntent.putExtra("username", username);
-        alarmIntent.putExtra("password", password);
-        PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
-        AlarmManager aManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//        aManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_HALF_DAY, AlarmManager.INTERVAL_HALF_DAY, pIntent);
-        aManager.setRepeating(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_HALF_HOUR, AlarmManager.INTERVAL_HALF_HOUR, pIntent);
+        Boolean showNotifications = settingsPrefs.getBoolean(getString(R.string.pref_key_show_notifications), false);
+        Boolean serverDownPref = showNotifications && settingsPrefs.getBoolean(getString(R.string.pref_key_server_down_notification), false);
+        if (serverDownPref) {
+            Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+            alarmIntent.putExtra("baseURL", baseURL);
+            alarmIntent.putExtra("username", username);
+            alarmIntent.putExtra("password", password);
+            PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+            AlarmManager aManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            aManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_HALF_DAY, AlarmManager.INTERVAL_HALF_DAY, pIntent);
+            //        aManager.setRepeating(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_HALF_HOUR, AlarmManager.INTERVAL_HALF_HOUR, pIntent);
+        }
     }
 
     public void onResume() {
