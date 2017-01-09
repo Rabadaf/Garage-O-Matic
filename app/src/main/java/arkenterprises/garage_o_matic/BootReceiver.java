@@ -6,6 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -30,13 +32,21 @@ public class BootReceiver extends BroadcastReceiver {
             Boolean showNotifications = settingsPrefs.getBoolean(context.getString(R.string.pref_key_show_notifications), false);
             Boolean serverDownPref = showNotifications && settingsPrefs.getBoolean(context.getString(R.string.pref_key_server_down_notification), false);
             if (serverDownPref) {
-                Intent alarmIntent = new Intent(context, AlarmReceiver.class);
-                alarmIntent.putExtra("baseURL", baseURL);
-                alarmIntent.putExtra("username", username);
-                alarmIntent.putExtra("password", password);
-                PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
-                AlarmManager aManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                aManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_HALF_DAY, AlarmManager.INTERVAL_HALF_DAY, pIntent);
+                ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null &&
+                        activeNetwork.isConnected();
+
+                if (isConnected) {
+                    Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+                    alarmIntent.putExtra("baseURL", baseURL);
+                    alarmIntent.putExtra("username", username);
+                    alarmIntent.putExtra("password", password);
+                    PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+                    AlarmManager aManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                    aManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_HALF_DAY, AlarmManager.INTERVAL_HALF_DAY, pIntent);
+                }
             }
         }
     }

@@ -147,6 +147,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_notification_ringtone)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_pi_address)));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_userID)));
         }
 
         @Override

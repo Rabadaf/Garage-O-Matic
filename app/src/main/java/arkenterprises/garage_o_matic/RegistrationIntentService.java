@@ -42,7 +42,9 @@ public class RegistrationIntentService extends IntentService {
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             Log.i(TAG, "GCM Registration Token: " + token);
 
-            sendRegistrationToServer(token);
+            String userID = sharedPreferences.getString(getString(R.string.pref_key_userID), null);
+            String tokenAndID = token + "," + userID;
+            sendRegistrationToServer(tokenAndID);
 
             sharedPreferences.edit().putBoolean(getString(R.string.pref_key_sentTokenToServer), true).apply();
         } catch (Exception e) {
@@ -67,7 +69,7 @@ public class RegistrationIntentService extends IntentService {
         RequestQueue queue = Volley.newRequestQueue(this);
         SharedPreferences settingsPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String baseURL = settingsPrefs.getString(getString(R.string.pref_key_pi_address), null);
-        String postURL = baseURL + "/macros/saveRegID/" + token;
+        String postURL = baseURL + "/id/" + token;
 
         SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE);

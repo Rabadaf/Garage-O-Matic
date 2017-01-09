@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
@@ -36,8 +38,10 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: Make sure restarting Pi works automatically
-// TODO: wire it up and mount in garage
+// TODO: prevent double click on toggle button
+// TODO: show server error message more directly, don't show door status when server down
+// TODO: fix server down notification setting
+// TODO: nicer error handling
 
 public class MainActivity extends AppCompatActivity {
 
@@ -126,44 +130,56 @@ public class MainActivity extends AppCompatActivity {
     public void checkDoorStatus() {
         String GPIOStatusURL = baseURL + "/GPIO/8/value";
 
-        final StringRequest getDoorStatus = new StringRequest(Request.Method.GET, GPIOStatusURL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.i(TAG, "Door Status Response: " + response);
-                String statusText;
-                String buttonText;
-                int backColor;
-                if (response.equals("1")) {
-                    statusText = getString(R.string.text_status_closed);
-                    buttonText = getString(R.string.button_toggle_open);
-                    backColor = ContextCompat.getColor(getBaseContext(), R.color.colorBackgroundClosed);
-                }
-                else {
-                    statusText = getString(R.string.text_status_open);
-                    buttonText = getString(R.string.button_toggle_close);
-                    backColor = ContextCompat.getColor(getBaseContext(), R.color.colorBackgroundOpen);
-                }
-                statusTextView.setText(statusText);
-                statusTextView.setBackgroundColor(backColor);
-                toggleButton.setText(buttonText);
-                connectionTextView.setText("");
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Something Went Wrong");
-                error.printStackTrace();
-                connectionTextView.setText(R.string.connection_error_message);
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                return createBasicAuthHeader(username, password);
-            }
-        };
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        Log.i(TAG, "Door status request: " + getDoorStatus);
-        queue.add(getDoorStatus);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnected();
+
+        if (isConnected) {
+            final StringRequest getDoorStatus = new StringRequest(Request.Method.GET, GPIOStatusURL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i(TAG, "Door Status Response: " + response);
+                    String statusText;
+                    String buttonText;
+                    int backColor;
+                    if (response.equals("1")) {
+                        statusText = getString(R.string.text_status_closed);
+                        buttonText = getString(R.string.button_toggle_open);
+                        backColor = ContextCompat.getColor(getBaseContext(), R.color.colorBackgroundClosed);
+                    } else {
+                        statusText = getString(R.string.text_status_open);
+                        buttonText = getString(R.string.button_toggle_close);
+                        backColor = ContextCompat.getColor(getBaseContext(), R.color.colorBackgroundOpen);
+                    }
+                    statusTextView.setText(statusText);
+                    statusTextView.setBackgroundColor(backColor);
+                    toggleButton.setText(buttonText);
+                    toggleButton.setEnabled(true);
+                    connectionTextView.setText("");
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "Something Went Wrong");
+                    error.printStackTrace();
+                    connectionTextView.setText(R.string.connection_error_message);
+                    statusTextView.setText(getString(R.string.text_status_unknown));
+                    statusTextView.setBackgroundColor(ContextCompat.getColor(getBaseContext(), R.color.colorBackgroundUnknown));
+                    toggleButton.setText(getString(R.string.button_toggle_unknown));
+                    toggleButton.setEnabled(false);
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    return createBasicAuthHeader(username, password);
+                }
+            };
+
+            Log.i(TAG, "Door status request: " + getDoorStatus);
+            queue.add(getDoorStatus);
+        }
     }
 
     public void toggleDoor(View view) {
