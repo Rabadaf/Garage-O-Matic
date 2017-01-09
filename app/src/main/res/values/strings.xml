@@ -54,10 +54,6 @@
     <string name="pref_title_door_open_too_long">Door open too long notification</string>
     <string name="pref_key_door_auto_closed_notification">door_auto_closed_notification</string>
     <string name="pref_title_door_auto_closed">Door automatically closed notifications</string>
-    <string name="server_error_notification_title_template">Garage-O-Matic Server Unavailable</string>
-    <string name="server_error_notification_text_template">Garage-O-Matic server unavailable as of %1$s</string>
-    <string name="pref_key_server_down_notification">server_down_notification</string>
-    <string name="pref_title_server_down">Server unavailable notifications</string>
     <string name="pref_userID">Enter ID</string>
     <string name="pref_key_userID">pref_key_userID</string>
     <string name="pref_title_userID">User ID</string>

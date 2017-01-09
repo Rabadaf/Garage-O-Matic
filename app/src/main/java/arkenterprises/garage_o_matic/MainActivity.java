@@ -87,19 +87,6 @@ public class MainActivity extends AppCompatActivity {
         connectionTextView = (TextView) findViewById(R.id.connectionStatusText);
         queue = Volley.newRequestQueue(this);
         checkDoorStatus();
-
-        Boolean showNotifications = settingsPrefs.getBoolean(getString(R.string.pref_key_show_notifications), false);
-        Boolean serverDownPref = showNotifications && settingsPrefs.getBoolean(getString(R.string.pref_key_server_down_notification), false);
-        if (serverDownPref) {
-            Intent alarmIntent = new Intent(this, AlarmReceiver.class);
-            alarmIntent.putExtra("baseURL", baseURL);
-            alarmIntent.putExtra("username", username);
-            alarmIntent.putExtra("password", password);
-            PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
-            AlarmManager aManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            aManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_HALF_DAY, AlarmManager.INTERVAL_HALF_DAY, pIntent);
-            //        aManager.setRepeating(AlarmManager.ELAPSED_REALTIME, AlarmManager.INTERVAL_HALF_HOUR, AlarmManager.INTERVAL_HALF_HOUR, pIntent);
-        }
     }
 
     public void onResume() {

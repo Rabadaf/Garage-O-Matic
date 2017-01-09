@@ -29,7 +29,6 @@ public class DoorOpenNotification {
     public static final Integer DOOR_OPEN_CODE = 0;
     public static final Integer DOOR_AUTO_CLOSED_CODE = 1;
     public static final Integer DOOR_OPEN_TOO_LONG_CODE = 2;
-    public static final Integer SERVER_NOT_AVAILABLE_CODE = 3;
 
 
     /**
@@ -57,9 +56,6 @@ public class DoorOpenNotification {
         }else if (notificationType == DOOR_AUTO_CLOSED_CODE){
             title = res.getString(R.string.door_auto_closed_title_template);
             text = res.getString(R.string.door_auto_closed_text_template, doorOpenTime);
-        }else if (notificationType == SERVER_NOT_AVAILABLE_CODE) {
-            title = res.getString(R.string.server_error_notification_title_template);
-            text = res.getString(R.string.server_error_notification_text_template, doorOpenTime);
         }else if (notificationType == DOOR_OPEN_TOO_LONG_CODE){
             title = res.getString(R.string.door_open_too_long_title_template);
             text = res.getString(R.string.door_open_too_long_text_template, doorOpenTime, doorOpenDuration);
