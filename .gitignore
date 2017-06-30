@@ -10,3 +10,12 @@
 /Pi Files/archive
 /Pi Files/garageenv
 /Pi Files/__pycache__
+Pi Files/1_arkf.duckdns.org_bundle.crt
+*.pyc
+Pi Files/arkf.duckdns.org.html
+*.key
+Pi Files/garage.sublime-project
+*.sublime-workspace
+Pi Files/GarageOMatic documentation.docx
+Pi Files/registrationIDs.txt
+Pi Files/GarageOMaticAPI.log

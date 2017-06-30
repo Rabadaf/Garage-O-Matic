@@ -34,10 +34,10 @@ autoCloseLimit = timedelta(minutes=60, seconds=30)
 # Set how often the auto-close will attempt to close the door if it fails the first time
 autoCloseRetryTime = timedelta(minutes=1, seconds=0)
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('Garage-O-Matic')
 # logger.addHandler(logging.StreamHandler())
-handler = logging.FileHandler(os.path.join(os.path.dirname(os.path.realpath(__file__)), "GarageOMatic.log"))
+handler = logging.RotatingFileHandler(os.path.join(os.path.dirname(os.path.realpath(__file__)), "GarageOMatic.log"), maxBytes=500000, backupCount=10)
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
