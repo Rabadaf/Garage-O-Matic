@@ -6,5 +6,7 @@
 .DS_Store
 /build
 /captures
-GarageProject/garage.sublime-workspace
-GarageProject/garage.sublime-project
+/GarageProject-old
+/Pi Files/archive
+/Pi Files/garageenv
+/Pi Files/__pycache__
