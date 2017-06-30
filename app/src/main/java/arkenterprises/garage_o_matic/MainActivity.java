@@ -39,9 +39,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 // TODO: prevent double click on toggle button
-// TODO: show server error message more directly, don't show door status when server down
-// TODO: fix server down notification setting
 // TODO: nicer error handling
+// TODO: notify more than once if open too long, maybe every hour?
+// TODO: add ability to tell the app that being open is ok for now. Make sure it has some sort of failsafe if we forget to undo that.
 
 public class MainActivity extends AppCompatActivity {
 
