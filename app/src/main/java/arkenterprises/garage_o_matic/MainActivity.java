@@ -1,7 +1,5 @@
 package arkenterprises.garage_o_matic;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -32,26 +29,24 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
 
 // TODO: prevent double click on toggle button
 // TODO: nicer error handling
-// TODO: notify more than once if open too long, maybe every hour?
 // TODO: add ability to tell the app that being open is ok for now. Make sure it has some sort of failsafe if we forget to undo that.
 
 public class MainActivity extends AppCompatActivity {
 
-    private static TextView statusTextView;
-    private static Button toggleButton;
+    private TextView statusTextView;
+    private Button toggleButton;
     private RequestQueue queue;
     private String username;
     private String password;
     private String baseURL;
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+//    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
     TextView connectionTextView;
 
@@ -59,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key),
@@ -73,18 +68,22 @@ public class MainActivity extends AppCompatActivity {
         baseURL = settingsPrefs.getString(getString(R.string.pref_key_pi_address), null);
 
         // Register with GCM, if we have the right play services installed
-        if (checkPlayServices()) {
+//        if (checkPlayServices()) {
             // Start IntentService to register this application with GCM.
-            Intent intent = new Intent(this, RegistrationIntentService.class);
-            startService(intent);
-        }
+//            Intent intent = new Intent(this, RegistrationIntentService.class);
+//            startService(intent);
+//        }
+        String fcmToken;
+        fcmToken = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG, "Current FCM Token: " + fcmToken);
+
 
         LocalBroadcastManager.getInstance(this).registerReceiver(doorOpenReceiver,
                 new IntentFilter("door_status_changed"));
 
-        toggleButton = (Button) findViewById(R.id.toggleButton);
-        statusTextView = (TextView) findViewById(R.id.statusText);
-        connectionTextView = (TextView) findViewById(R.id.connectionStatusText);
+        toggleButton = findViewById(R.id.toggleButton);
+        statusTextView = findViewById(R.id.statusText);
+        connectionTextView = findViewById(R.id.connectionStatusText);
         queue = Volley.newRequestQueue(this);
         checkDoorStatus();
     }
@@ -220,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
                 editor.remove(getString(R.string.username_hint));
                 editor.remove(getString(R.string.password_hint));
-                editor.commit();
+                editor.apply();
 
                 Intent loginIntent = new Intent(this, LoginActivity.class);
                 startActivity(loginIntent);
@@ -239,21 +238,21 @@ public class MainActivity extends AppCompatActivity {
      * it doesn't, display a dialog that allows users to download the APK from
      * the Google Play Store or enable it in the device's system settings.
      */
-    private boolean checkPlayServices() {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
-                        .show();
-            } else {
-                Log.i(TAG, "This device is not supported.");
-                finish();
-            }
-            return false;
-        }
-        return true;
-    }
+//    private boolean checkPlayServices() {
+//        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+//        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+//        if (resultCode != ConnectionResult.SUCCESS) {
+//            if (apiAvailability.isUserResolvableError(resultCode)) {
+//                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+//                        .show();
+//            } else {
+//                Log.i(TAG, "This device is not supported.");
+//                finish();
+//            }
+//            return false;
+//        }
+//        return true;
+//    }
 
     private BroadcastReceiver doorOpenReceiver = new BroadcastReceiver() {
         @Override

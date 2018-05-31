@@ -1,10 +1,7 @@
 package arkenterprises.garage_o_matic;
 
-import android.app.IntentService;
-import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
@@ -17,47 +14,33 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- */
-public class RegistrationIntentService extends IntentService {
-    private static final String TAG = "RegIntentService";
+public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
-    public RegistrationIntentService() {
-        super("RegistrationIntentService");
-    }
+    private static final String TAG = "MyFirebaseIIDService";
 
+    /**
+     * Called if InstanceID token is updated. This may occur if the security of
+     * the previous token had been compromised. Note that this is called when the InstanceID token
+     * is initially generated so this is where you would retrieve the token.
+     */
+    // [START refresh_token]
     @Override
-    protected void onHandleIntent(Intent intent) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+    public void onTokenRefresh() {
+        // Get updated InstanceID token.
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG, "Refreshed token: " + refreshedToken);
 
-        try {
-            Bundle extras = intent.getExtras();
-            String token;
-            if (extras == null) {
-                token = FirebaseInstanceId.getInstance().getToken();
-            } else {
-                token = extras.getString("TOKEN");
-            }
-
-            Log.i(TAG, "GCM Registration Token: " + token);
-
-            String userID = sharedPreferences.getString(getString(R.string.pref_key_userID), null);
-            String tokenAndID = token + "," + userID;
-            sendRegistrationToServer(tokenAndID);
-
-            sharedPreferences.edit().putBoolean(getString(R.string.pref_key_sentTokenToServer), true).apply();
-        } catch (Exception e) {
-            Log.d(TAG, "Failed to complete token refresh", e);
-            sharedPreferences.edit().putBoolean(getString(R.string.pref_key_sentTokenToServer), false).apply();
-        }
-
+        // If you want to send messages to this application instance or
+        // manage this apps subscriptions on the server side, send the
+        // Instance ID token to your app server.
+        sendRegistrationToServer(refreshedToken);
     }
+    // [END refresh_token]
 
     Map<String, String> createBasicAuthHeader(String username, String password) {
         Map<String, String> headerMap = new HashMap<>();
@@ -70,11 +53,23 @@ public class RegistrationIntentService extends IntentService {
         return headerMap;
     }
 
+    /**
+     * Persist token to third-party servers.
+     *
+     * Modify this method to associate the user's FCM InstanceID token with any server-side account
+     * maintained by your application.
+     *
+     * @param token The new token.
+     */
     private void sendRegistrationToServer(String token) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String userID = sharedPreferences.getString(getString(R.string.pref_key_userID), null);
+        String tokenAndID = token + "," + userID;
+
         RequestQueue queue = Volley.newRequestQueue(this);
         SharedPreferences settingsPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String baseURL = settingsPrefs.getString(getString(R.string.pref_key_pi_address), null);
-        String postURL = baseURL + "/id/" + token;
+        String postURL = baseURL + "/id/" + tokenAndID;
 
         SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE);

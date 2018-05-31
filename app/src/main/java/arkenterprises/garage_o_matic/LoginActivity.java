@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,14 +16,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-
-import java.util.Map;
-
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
@@ -34,7 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Get preferences from specific file
@@ -52,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        EditText editText = (EditText) findViewById(R.id.password_text);
+        EditText editText = findViewById(R.id.password_text);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -77,8 +67,8 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sharedPref = this.getSharedPreferences(getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE);
 
-        EditText usernameText = (EditText) findViewById(R.id.username_text);
-        EditText passwordText = (EditText) findViewById(R.id.password_text);
+        EditText usernameText = findViewById(R.id.username_text);
+        EditText passwordText = findViewById(R.id.password_text);
         String username = usernameText.getText().toString();
         String password = passwordText.getText().toString();
 
@@ -111,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 editor.remove(getString(R.string.username_hint));
                 editor.remove(getString(R.string.password_hint));
-                editor.commit();
+                editor.apply();
 
                 Intent loginIntent = new Intent(this, LoginActivity.class);
                 startActivity(loginIntent);

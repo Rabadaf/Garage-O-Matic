@@ -7,9 +7,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
@@ -64,7 +61,9 @@ public class DoorOpenNotification {
             text = "Error";
         }
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+
+        final String channelID = "ChannelID_1";
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelID)
 
                 // Set appropriate defaults for the notification light, sound,
                 // and vibration.
@@ -120,25 +119,16 @@ public class DoorOpenNotification {
     private static void notify(final Context context, final Notification notification, final Integer code) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-            nm.notify(NOTIFICATION_TAG, code, notification);
-        } else {
-            nm.notify(NOTIFICATION_TAG.hashCode(), notification);
-        }
+        nm.notify(NOTIFICATION_TAG, code, notification);
     }
 
     /**
-     * Cancels any notifications of this type previously shown using
-     * {@link #notify(Context, String, String, Boolean)}.
+     * Cancels any notifications of this type previously shown
      */
     @TargetApi(Build.VERSION_CODES.ECLAIR)
     public static void cancel(final Context context, final Integer code) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-            nm.cancel(NOTIFICATION_TAG, code);
-        } else {
-            nm.cancel(NOTIFICATION_TAG.hashCode());
-        }
+        nm.cancel(NOTIFICATION_TAG, code);
     }
 }
