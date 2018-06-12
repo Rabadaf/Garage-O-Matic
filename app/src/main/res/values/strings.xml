@@ -38,7 +38,7 @@
     <string name="pref_key_show_notifications">show_notifications</string>
     <string name="pref_key_notification_ringtone">notification_ringtone</string>
     <string name="pref_key_notification_vibrate">notification_vibrate</string>
-    <string name="pref_default_pi_address">http://www.example.com</string>
+    <string name="pref_default_pi_address">https://arkf.duckdns.org/api</string>
     <string name="pref_key_pi_address">pi_address</string>
     <string name="pref_title_pi_address">Web Address</string>
     <string name="action_logout">Logout</string>

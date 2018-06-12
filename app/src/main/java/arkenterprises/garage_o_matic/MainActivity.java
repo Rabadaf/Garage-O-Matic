@@ -13,7 +13,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +30,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import java.util.HashMap;
 import java.util.Map;
 
 // TODO: prevent double click on toggle button
@@ -67,16 +65,11 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences settingsPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         baseURL = settingsPrefs.getString(getString(R.string.pref_key_pi_address), null);
 
-        // Register with GCM, if we have the right play services installed
-//        if (checkPlayServices()) {
-            // Start IntentService to register this application with GCM.
-//            Intent intent = new Intent(this, RegistrationIntentService.class);
-//            startService(intent);
-//        }
         String fcmToken;
         fcmToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Current FCM Token: " + fcmToken);
-
+        Common common = new Common(TAG);
+        common.sendRegistrationToServer(fcmToken, this);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(doorOpenReceiver,
                 new IntentFilter("door_status_changed"));
@@ -102,16 +95,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    Map<String, String> createBasicAuthHeader(String username, String password) {
-        Map<String, String> headerMap = new HashMap<>();
-
-        String credentials = username + ":" + password;
-        String base64EncodedCredentials =
-                Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-        headerMap.put("Authorization", "Basic " + base64EncodedCredentials);
-
-        return headerMap;
-    }
 
     public void checkDoorStatus() {
         String GPIOStatusURL = baseURL + "/GPIO/8/value";
@@ -159,7 +142,8 @@ public class MainActivity extends AppCompatActivity {
             }) {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    return createBasicAuthHeader(username, password);
+                    Common common = new Common(TAG);
+                    return common.createBasicAuthHeader(username, password);
                 }
             };
 
@@ -193,7 +177,8 @@ public class MainActivity extends AppCompatActivity {
                 postErrorListener) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return createBasicAuthHeader(username, password);
+                Common common = new Common(TAG);
+                return common.createBasicAuthHeader(username, password);
             }
         };
 
