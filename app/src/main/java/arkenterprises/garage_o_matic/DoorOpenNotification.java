@@ -2,6 +2,7 @@ package arkenterprises.garage_o_matic;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -62,7 +63,7 @@ public class DoorOpenNotification {
         }
 
 
-        final String channelID = "ChannelID_1";
+        final String channelID = "garageChannel";
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelID)
 
                 // Set appropriate defaults for the notification light, sound,
@@ -112,20 +113,33 @@ public class DoorOpenNotification {
                 .setAutoCancel(true)
                 .setVisibility(Notification.VISIBILITY_PUBLIC);
 
-        notify(context, builder.build(), notificationType);
-    }
 
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
-    private static void notify(final Context context, final Notification notification, final Integer code) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.notify(NOTIFICATION_TAG, code, notification);
+
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelID,
+                    "Garage Door Notifications",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            nm.createNotificationChannel(channel);
+        }
+        nm.notify(NOTIFICATION_TAG, notificationType,  builder.build());
+//        notify(context, builder.build(), notificationType);
     }
+
+//    @TargetApi(Build.VERSION_CODES.ECLAIR)
+//    private static void notify(final Context context, final Notification notification, final Integer code) {
+//        final NotificationManager nm = (NotificationManager) context
+//                .getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//        nm.notify(NOTIFICATION_TAG, code, notification);
+//    }
 
     /**
      * Cancels any notifications of this type previously shown
      */
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
+//    @TargetApi(Build.VERSION_CODES.ECLAIR)
     public static void cancel(final Context context, final Integer code) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
